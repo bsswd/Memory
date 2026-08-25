@@ -4,6 +4,9 @@ const emojis = ['😀', '😄', '😁', '😆', '😅', '🤣', '😂',
 
 
 let numberOfCards = 0;
+let firstCard = null;
+let secondCard = null;
+let isBoardLocked = false;
 
 function startGame(){
     const boardWidth = parseInt(document.getElementById('width').value);
@@ -19,6 +22,7 @@ function startGame(){
         return;
     }
 
+    reset();
     setupBoard(boardWidth, boardHeight);
 }
 
@@ -67,7 +71,63 @@ function shuffleArray(array){
 }
 
 function flipCard(card, emojiElement){
-    card.classList.toggle('flipped');
+    if (isBoardLocked === true ||
+            card === firstCard ||
+                card.classList.contains('matched')){
+        return;
+    }
+
+    card.classList.add('flipped');
+    
+    if(firstCard === null){
+        firstCard = card;
+    }
+    else{
+        secondCard = card;
+        checkForMatch();
+    }
+}
+
+function checkForMatch(){
+    const isMatch = firstCard.dataset.emoji === secondCard.dataset.emoji;
+
+    if(isMatch){
+        disableCards();
+    }
+    else{
+        unflipCards();
+    }
+}
+
+function disableCards(){
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+
+    const adjustedTotal = numberOfCards % 2 === 0 ? numberOfCards : numberOfCards - 1;
+
+    if(document.querySelectorAll('.card.matched').length === adjustedTotal){
+       setTimeout(() =>{
+        alert("You win!")
+
+       }, 1000) 
+    }
+
+    reset();
+}
+
+function unflipCards(){
+    isBoardLocked = true;
+    setTimeout(() => {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+
+        reset();
+    }, 1000);
+}
+
+function reset(){
+    [firstCard, secondCard] = [null, null];
+    isBoardLocked = false;
 }
 
 

@@ -40,6 +40,12 @@ body{
         transform: rotateY(180deg);
         content-visibility: visible;
     }
+
+    &.matched{
+        background: var(--green);
+        cursor: default;
+        
+    }
 }
 
 .controls{
